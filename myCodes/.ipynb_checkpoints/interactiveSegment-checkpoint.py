@@ -28,15 +28,15 @@ os.makedirs(out_dir, exist_ok=True)
 torch.autocast(device_type="cuda", dtype=torch.bfloat16).__enter__()
 
 def image_overlay(image, segmented_image):
-    alpha = 0.6 # transparency for the original image
+    alpha = 0.8 # transparency for the original image
     beta = 0.4 # transparency for the segmentation map
     gamma = 0 # scalar added to each sum
  
     segmented_image = np.array(segmented_image, dtype=np.float32)
-    segmented_image = cv2.cvtColor(segmented_image, cv2.COLOR_RGB2BGR)
+    segmented_image = cv2.cvtColor(segmented_image, cv2.COLOR_BGR2RGB)
  
     image = np.array(image, dtype=np.float32) / 255.
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
  
     cv2.addWeighted(image, alpha, segmented_image, beta, gamma, image)
     return image
@@ -92,7 +92,10 @@ ix, iy = -1, -1
 drawing = False
 last_point_time = 0  # To keep track of the last point creation time
 delay = 0.2  # Time delay in seconds
- 
+
+show_image = np.array(cv2.imread(args.input), dtype=np.float32) / 255.
+# show_image = cv2.cvtColor(show_image, cv2.COLOR_BGR2RGB)
+
 # Mouse callback function
 def draw(event, x, y, flags, param):
     global ix, iy, drawing, rectangles, clicked, labels, mode, last_point_time
@@ -136,7 +139,12 @@ def draw(event, x, y, flags, param):
 # Load an image
 cv2.namedWindow('image')
 cv2.setMouseCallback('image', draw)
- 
+
+# show_image= np.array(Image.open(args.input).convert('RGB'))
+
+
+
+
 # Press 'p' to switch to point mode, 'r' to switch to rectangle mode, 'q' to quit
 while True:
     cv2.imshow('image', show_image)
@@ -157,7 +165,8 @@ input_label = np.array(labels)
 input_rectangles = np.array(rectangles)
 
 image_input = np.array(Image.open(args.input).convert('RGB'))
- 
+
+
 # Load the model mask generator.
 predictor = load_model(args.ckpt)
 predictor.set_image(image_input)

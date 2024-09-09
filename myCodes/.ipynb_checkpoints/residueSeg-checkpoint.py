@@ -38,7 +38,7 @@ def show_anns(anns, borders=True):
 
 testPath = "/home/pcuv48_lab/SamSegProject/SampleImages/"
 
-image1 = testPath + "2018-L20-3-16_crop_1152_1408.png"
+image1 = testPath + "2018-L27-1-34.jpg"
 
 image = Image.open(image1)
 image = np.array(image.convert("RGB"))
